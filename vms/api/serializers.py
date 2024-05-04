@@ -5,6 +5,7 @@ class VendorSerializer(ModelSerializer):
     class Meta:
         model = Vendor
         fields = '__all__'
+        
 
 class PurchaseOrderSerializer(ModelSerializer):
     vendor = SerializerMethodField()
