@@ -26,6 +26,8 @@ def generate_code(city:str) -> str:
     return code   
 
 class Vendor(models.Model):
+    # Represents a vendor supplying goods or services.
+
     name = models.CharField(max_length=256, null=False, blank=False)
     contact_details = models.TextField(null=False, blank=False)
     address = models.TextField(null=False, blank=False)
@@ -36,6 +38,7 @@ class Vendor(models.Model):
     fulfillment_rate = models.FloatField(default=0.0)
     vendor_code = models.CharField(max_length=7, unique=True, blank=True)
 
+    # Overriding defualt save() method in order to generate vendor_code manually
     def save(self, *args, **kwargs):
         if not self.pk:
             self.vendor_code = generate_code(self.city)
@@ -51,6 +54,8 @@ class Vendor(models.Model):
         
         
 class PurchaseOrder(models.Model):
+
+    # Represents a purchase order for goods or services from a vendor.
 
     STATUS_CHOICES = [
         ('pending','Pending'),
@@ -69,8 +74,14 @@ class PurchaseOrder(models.Model):
     issue_date = models.DateTimeField(null=True, blank=True)
     acknowledgement_date = models.DateTimeField(null=True, blank=True)
 
+    '''
+    Using django-simple-history package to get the information about
+    the previous instance which is needed for calculation of 
+    performance metrics of vendors
+    '''
     history = HistoricalRecords()
 
+    # Overriding defualt save() method in order to generate po_number manually
     def save(self, *args,**kwargs):
         if not self.pk:
             self.po_number = generate_code("ORD")
@@ -85,6 +96,9 @@ class PurchaseOrder(models.Model):
         return self.po_number
     
 class HistoricalPerformance(models.Model):
+
+    # Represents historical performance metrics of vendors at a given time.
+
     vendor = models.ForeignKey(Vendor, on_delete=models.DO_NOTHING, related_name="performances")
     date = models.DateTimeField(auto_now_add=True)
     on_time_delivery_rate = models.FloatField(default=0)
@@ -95,6 +109,10 @@ class HistoricalPerformance(models.Model):
     def __str__(self) -> str:
         return f"{self.vendor.name} performance till {str(self.date)[:10]}"
     
+    '''
+    Overriding the default save() method to get the snapshot of vendor performance
+    metrics at current date and time (timezone.now())
+    '''
     def save(self, *args, **kwargs):
         vendor = self.vendor
         self.on_time_delivery_rate = vendor.on_time_delivery_rate
@@ -105,5 +123,9 @@ class HistoricalPerformance(models.Model):
         super().save(*args, **kwargs)
     
 
+'''
+Connect post_save signal to performance_metrics_handler function for
+calculation of vendor's performance metrics
+'''
 post_save.connect(performance_metrics_handler, sender=PurchaseOrder)
 

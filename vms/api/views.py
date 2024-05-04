@@ -1,4 +1,4 @@
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import  permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -10,18 +10,17 @@ from django.utils import timezone
 # Create your views here.
 
 
-@api_view(['GET'])
-def index(request):
-    print(request.user)
-    return Response("api")
-
+# Requires an access token 'Bearer <token>' to access this view
 @permission_classes([IsAuthenticated])
 class ListAllVendors(APIView):
+
+    # view to list all the vendor and their information
     def get(self, request):
         all_vendors = Vendor.objects.all()
         serializer = VendorSerializer(all_vendors, many=True)
         return Response(serializer.data)
     
+    # view for creating a new vendor
     def post(self, request):
         serializer = VendorSerializer(data=request.data)
         if serializer.is_valid():
@@ -31,13 +30,17 @@ class ListAllVendors(APIView):
         return Response({"message" : "invalid data"}, status=status.HTTP_400_BAD_REQUEST)
     
 
+# Requires an access token 'Bearer <token>' to access this view
 @permission_classes([IsAuthenticated])
 class ListVendorDetails(APIView):
+
+    # view to get the information about a vendor through vendor_id
     def get(self, request, vendor_id):
         vendor = get_object_or_404(Vendor, pk=vendor_id)
         serializer = VendorSerializer(vendor)
         return Response(serializer.data, status=status.HTTP_200_OK)
                 
+     # view to update the information of vendor through vendor_id               
     def put(self, request, vendor_id):
         vendor = get_object_or_404(Vendor, pk=vendor_id)
         serializer = VendorSerializer(vendor, data=request.data)
@@ -47,21 +50,26 @@ class ListVendorDetails(APIView):
         
         return Response(serializer.errors)
     
+    # view to delete a vendor through vendor_id
     def delete(self, request, vendor_id):
         vendor = get_object_or_404(Vendor, pk=vendor_id)
         serializer = VendorSerializer(vendor)
         vendor.delete()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+# Requires an access token 'Bearer <token>' to access this view
 @permission_classes([IsAuthenticated])
 class ListAllPuchaseOrders(APIView):
+
+    # view to list all the purchase orders and their information
     def get(self, request):
         all_po = PurchaseOrder.objects.all()
         serializer = PurchaseOrderSerializer(all_po, many=True)
         return Response(serializer.data)
     
+    # view for creating a new purchase order
     def post(self, request):
-        print(request.data)
         vendor_id : int = request.data.pop('vendor')
         vendor = get_object_or_404(Vendor, pk=vendor_id)
         try:
@@ -73,19 +81,24 @@ class ListAllPuchaseOrders(APIView):
             return Response({"message":"invalid data"}, status=status.HTTP_400_BAD_REQUEST)
     
 
+# Requires an access token 'Bearer <token>' to access this view
 @permission_classes([IsAuthenticated])
 class ListPurchaseOrder(APIView):
+
+    # view to get the information about a purchase order through po_id
     def get(self, request, po_id):
         po = get_object_or_404(PurchaseOrder, pk=po_id)
         serializer = PurchaseOrderSerializer(po)
         return Response(serializer.data, status=status.HTTP_200_OK)
         
+    # view to delete a purchase order through po_id
     def delete(self, request, po_id):
         po = get_object_or_404(PurchaseOrder, pk=po_id)
         serializer = PurchaseOrderSerializer(po)
         po.delete()
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
+    # view to update the information of purchase order through po_id
     def put(self, request, po_id):
         po = get_object_or_404(PurchaseOrder, pk=po_id)
         serializer = PurchaseOrderSerializer(po, data=request.data)
@@ -95,16 +108,24 @@ class ListPurchaseOrder(APIView):
         
         return Response(serializer.errors)
     
+
+# Requires an access token 'Bearer <token>' to access this view
 @permission_classes([IsAuthenticated])
 class ListVendorPerformance(APIView):
+    # view to get the information about vendor along with its average performance metrics through vendor_id
     def get(self, request, vendor_id):
         vendor = get_object_or_404(Vendor, pk=vendor_id)
         vhp = HistoricalPerformance.objects.filter(vendor=vendor).all()
         serializer = HistoricalPerformanceSerializer(vhp, many=True)
         return Response(serializer.data)
     
-# @permission_classes([IsAuthenticated])
+
+# Requires an access token 'Bearer <token>' to access this view
+@permission_classes([IsAuthenticated])
 class AcknowledgePurchaseOrder(APIView):
+
+    # view for vendor to acknowledge its purchase order through po_id. This triggers recalculation of average 
+    # response time of vendor
     def post(self, request, po_id):
         po = get_object_or_404(PurchaseOrder, pk=po_id)
         po.acknowledgement_date = timezone.now()
