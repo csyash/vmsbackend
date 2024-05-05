@@ -20,18 +20,18 @@ urlpatterns = [
     path('vendors/', views.ListAllVendors.as_view(), name="all vendors"),
 
     # Endpoint for listing, updating and deleting of specific vendor by vendor_id. Accepts Get, Put and Delete requests
-    path('vendors/<int:vendor_id>', views.ListVendorDetails.as_view(), name="vendor"),
+    path('vendors/<int:vendor_id>/', views.ListVendorDetails.as_view(), name="vendor"),
 
     # Endpoint for listing performance info of specific vendor by vendor_id
-    path('vendors/<int:vendor_id>/performance', views.ListVendorPerformance.as_view(), name="vendor performance"),
+    path('vendors/<int:vendor_id>/performance/', views.ListVendorPerformance.as_view(), name="vendor performance"),
 
     # Endpoint for listing all purchase orders and creating a new purchase order. Accepts Get and Post requests
     path('purchase_orders/', views.ListAllPuchaseOrders.as_view(), name="all orders"),
 
     # Endpoint for listing, updating and deleting of specific purchase order by po_id. Accepts Get, Put and Delete requests
-    path('purchase_orders/<int:po_id>', views.ListPurchaseOrder.as_view(), name="purchase order"),
+    path('purchase_orders/<int:po_id>/', views.ListPurchaseOrder.as_view(), name="purchase order"),
 
     # Endpoint for vendors to acknowledge a purchase order through po_id, initiates re-calculation of average response time of the vendor
-    path('purchase_orders/<int:po_id>/acknowledge', views.AcknowledgePurchaseOrder.as_view(), name="order acknowledge"),
+    path('purchase_orders/<int:po_id>/acknowledge/', views.AcknowledgePurchaseOrder.as_view(), name="order acknowledge"),
     
 ]

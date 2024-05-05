@@ -20,7 +20,7 @@ def performance_metrics_handler(sender, instance, created, **kwargs):
         - Calculates and updates the average response time.
         - Calculates and updates the fulfillment rate.
     """
-    print("inside quality rating handler")
+    print("inside performance metrics handler")
     
     # Retrieve the vendor associated with the purchase order
     vendor = instance.vendor
@@ -35,6 +35,26 @@ def performance_metrics_handler(sender, instance, created, **kwargs):
     previous_status = instance.history.first().status if not created else None
     
     if not created:
+
+          # Calculate and update average response time
+        if instance.acknowledgement_date is not None:
+            print("Inside calc of Average Response Time")
+            if all_pos.count() == 0:
+                vendor.on_time_delivery_rate = 0
+                vendor.quality_rating_avg = 0
+                vendor.average_response_time = 0
+                vendor.fulfillment_rate = 0
+                vendor.save()
+                return
+            
+            total_response_time = all_pos.aggregate(total_response_time=Sum(ExpressionWrapper(F('acknowledgement_date') - F('issue_date'), output_field=fields.DurationField())))['total_response_time']
+            if total_response_time is not None:
+                average_response_time = total_response_time.total_seconds() / all_pos.count()
+                vendor.average_response_time = average_response_time
+            else:
+                vendor.average_response_time = 0
+
+
         if completed_pos.count() == 0 or all_pos.count() == 0:
             print("Inside first if count=0")
             vendor.on_time_delivery_rate = 0
@@ -57,24 +77,6 @@ def performance_metrics_handler(sender, instance, created, **kwargs):
             total_sum_quality_rating = temp['quality_rating__sum']
             average_quality_rating_sum = (total_sum_quality_rating / pos_where_quality_was_provided.count())
             vendor.quality_rating_avg = average_quality_rating_sum    
-                        
-        # Calculate and update average response time
-        if instance.acknowledgement_date is not None:
-            print("Inside calc of Average Response Time")
-            if all_pos.count() == 0:
-                vendor.on_time_delivery_rate = 0
-                vendor.quality_rating_avg = 0
-                vendor.average_response_time = 0
-                vendor.fulfillment_rate = 0
-                vendor.save()
-                return
-            
-            total_response_time = all_pos.aggregate(total_response_time=Sum(ExpressionWrapper(F('acknowledgement_date') - F('issue_date'), output_field=fields.DurationField())))['total_response_time']
-            if total_response_time is not None:
-                average_response_time = total_response_time.total_seconds() / all_pos.count()
-                vendor.average_response_time = average_response_time
-            else:
-                vendor.average_response_time = 0
             
         # Calculate and update fulfillment rate
         if instance.status != previous_status:

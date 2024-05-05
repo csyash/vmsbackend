@@ -101,6 +101,10 @@ class ListPurchaseOrder(APIView):
     # view to update the information of purchase order through po_id
     def put(self, request, po_id):
         po = get_object_or_404(PurchaseOrder, pk=po_id)
+        vendor_id_received = request.data.pop('vendor')
+        vendor_received = get_object_or_404(Vendor, pk=vendor_id_received)
+        if po.vendor.id != vendor_id_received:
+            po.vendor = vendor_received
         serializer = PurchaseOrderSerializer(po, data=request.data)
         if serializer.is_valid():
             serializer.save()
