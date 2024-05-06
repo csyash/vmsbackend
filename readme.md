@@ -1,5 +1,44 @@
 # A backend application for Vendor Management System built using django, with real time performance metrics.
 
+### USAGE:
+
+### 1.  Create a virtual environment:
+```
+python3 -m venv env
+
+```
+
+### 2.  Activate the virtual environment:
+```
+env\Scripts\activate
+```
+
+### 3. Install Dependencies:
+```
+pip install requirements.txt
+```
+
+### 4. Create super user:
+* On command terminal create super user using:
+```
+python manage.py createsuperuser
+```
+
+### 5. Login to Admin panel to create Users, Vendors, Purchase Orders and Historical Performance metrics by going to /admin.
+
+## RUN TESTS
+
+## 1. Run base app's tests:
+```
+python manage.py test base
+```
+
+## 2. Run api app's tests:
+```
+python manage.py test api
+```
+
+
 ## API Endpoints Documentation:
 
 ### 1) Obtain JWT Token:
@@ -149,7 +188,23 @@ const response = await fetch('/api/purchase_orders/', {
 });
 ```
 
-### 7) Retrieve, Update, and Delete Specific Purchase Order:
+### 7) List All purchase orders filter by vendor_id
+URL: /api/purchase_orders?vendor_id=<vendor_id>
+*   Methods: GET, POST
+*   Description: List all purchase orders and create a new purchase order.
+*   Usage
+```
+// Example usage in JavaScript
+// Fetch all purchase orders
+const response = await fetch('/api/purchase_orders?vendor_id=<vendor_id>', {
+  method: 'GET',
+  headers: {
+    'Authorization': `Bearer ${accessToken}`
+  }
+});
+```
+
+### 8) Retrieve, Update, and Delete Specific Purchase Order:
 *   URL: /api/purchase_orders/<po_id>/
 *   Methods: GET, PUT, DELETE
 *   Description: Retrieve, update, or delete a specific purchase order by po_id.
@@ -187,7 +242,7 @@ const response = await fetch(`/api/purchase_orders/${poId}`, {
 });
 ```
 
-### 8) Acknowledge Purchase Order:
+### 9) Acknowledge Purchase Order:
 *   URL: /api/purchase_orders/<po_id>/acknowledge/
 *   Method: POST
 *   Description: Acknowledge a purchase order by po_id, initiating recalculation of average response time for the vendor.

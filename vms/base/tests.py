@@ -24,7 +24,14 @@ class VendorTestCase(TestCase):
             delivery_date=timezone.now() - timezone.timedelta(seconds=10),
             items={"item": "Test Item"},
             quantity=1,
+        )
 
+        self.po2 = PurchaseOrder.objects.create(
+            vendor=self.vendor2,
+            delivery_date=timezone.now() - timezone.timedelta(seconds=10),
+            items={"item": "Test Item"},
+            quantity=1,
+            status='completed'
         )
         
 
@@ -66,7 +73,7 @@ class VendorTestCase(TestCase):
         self.assertGreaterEqual(self.vendor1.on_time_delivery_rate, 0)
 
     def test_total_completed_pos(self):
-        completed_pos = self.vendor1.orders.filter(status="completed").count()
+        completed_pos = self.vendor2.orders.filter(status="completed").count()
         self.assertEqual(completed_pos,1)
 
 class PurchaseOrderTestCase(TestCase):
@@ -79,14 +86,14 @@ class PurchaseOrderTestCase(TestCase):
         )
 
         self.po1 = PurchaseOrder.objects.create(
-            vendor=self.vendor1,
+            vendor=self.vendor,
             delivery_date=timezone.now() - timezone.timedelta(seconds=10),
             items={"item": "Test Item"},
             quantity=1,
         )
 
         self.po2 = PurchaseOrder.objects.create(
-            vendor=self.vendor1,
+            vendor=self.vendor,
             delivery_date=timezone.now() - timezone.timedelta(seconds=10),
             items={"item": "Test Item"},
             quantity=1,
