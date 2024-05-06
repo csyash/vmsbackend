@@ -1,3 +1,5 @@
+// EXAMPLE ON HOW TO USE EACH API
+
 // GETTING THE ACCESS TOKEN
 const getToken = async () => {
   const res = await fetch("http://127.0.0.1:8000/api/token/", {
@@ -61,19 +63,14 @@ const createNewVendor = async () => {
 const updateVendor = async (vendor_id) => {
   const accessToken = await getToken();
 
-  const res = await fetch(`http://127.0.0.1:8000/api/vendors/${vendor_id}`, {
+  const res = await fetch(`http://127.0.0.1:8000/api/vendors/${vendor_id}/`, {
     method: "PUT",
     headers: {
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      id: 999,
-      name: "Divya Jewellers",
-      contact_details: "email:divya@eg.com",
-      address: "Telibandha Raipur",
-      city: "Raipur",
-      vendor_code: "dajda f",
+      name: "Trisha Traders Updated",
     }),
   });
 
@@ -224,7 +221,7 @@ const updatePurchaseOrder = async (po_id) => {
   const accessToken = await getToken();
 
   const res = await fetch(
-    `http://127.0.0.1:8000/api/purchase_orders/${po_id}`,
+    `http://127.0.0.1:8000/api/purchase_orders/${po_id}/`,
     {
       method: "PUT",
       headers: {
@@ -284,10 +281,31 @@ const fetchVendorPerformance = async (vendor_id) => {
   }
 };
 
+const acknowledgePurchaseOrder = async (po_id) => {
+  const accessToken = await getToken();
+
+  const res = await fetch(
+    "http://127.0.0.1:8000/api/purchase_orders/1/acknowledge/",
+    {
+      method: "post",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+
+  if (res.ok) {
+    const data = await res.json();
+    console.log(data);
+  } else {
+    console.log(res.statusText);
+  }
+};
+
 // fetchAllVendors();
 // createNewVendor()
 // fetchVendor(7);
-// updateVendor(8)
+// updateVendor(3);
 // deleteVendor(8);
 
 // fetchAllPuchaseOrders();
@@ -297,3 +315,4 @@ const fetchVendorPerformance = async (vendor_id) => {
 // updatePurchaseOrder(6);
 
 // fetchVendorPerformance(3);
+acknowledgePurchaseOrder(1);

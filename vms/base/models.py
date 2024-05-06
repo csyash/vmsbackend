@@ -27,7 +27,7 @@ def generate_code(city:str) -> str:
 
 class Vendor(models.Model):
     # Represents a vendor supplying goods or services.
-
+    
     name = models.CharField(max_length=256, null=False, blank=False)
     contact_details = models.TextField(null=False, blank=False)
     address = models.TextField(null=False, blank=False)
@@ -36,7 +36,7 @@ class Vendor(models.Model):
     quality_rating_avg = models.FloatField(default=0.0)
     average_response_time = models.FloatField(default=0.0)
     fulfillment_rate = models.FloatField(default=0.0)
-    vendor_code = models.CharField(max_length=7, unique=True, blank=True)
+    vendor_code = models.CharField(max_length=18, unique=True, blank=True)
 
     # Overriding defualt save() method in order to generate vendor_code manually
     def save(self, *args, **kwargs):
@@ -63,7 +63,7 @@ class PurchaseOrder(models.Model):
         ('cancelled','Cancelled'),
     ]
 
-    po_number = models.CharField(max_length=256,unique=True, blank=True)
+    po_number = models.CharField(max_length=18,unique=True, blank=True)
     vendor = models.ForeignKey(Vendor, on_delete=models.DO_NOTHING, related_name="orders")
     order_date = models.DateTimeField(auto_now_add=True)
     delivery_date = models.DateTimeField(blank=True)

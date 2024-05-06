@@ -20,7 +20,7 @@ def performance_metrics_handler(sender, instance, created, **kwargs):
         - Calculates and updates the average response time.
         - Calculates and updates the fulfillment rate.
     """
-    print("inside performance metrics handler")
+    
     
     # Retrieve the vendor associated with the purchase order
     vendor = instance.vendor
@@ -79,7 +79,7 @@ def performance_metrics_handler(sender, instance, created, **kwargs):
             vendor.quality_rating_avg = average_quality_rating_sum    
             
         # Calculate and update fulfillment rate
-        if instance.status != previous_status:
+        if instance.status is not previous_status:
             print("Inside calc of Fulfillment Rate")
             if completed_pos.count() == 0 or all_pos.count() == 0:
                 vendor.on_time_delivery_rate = 0
