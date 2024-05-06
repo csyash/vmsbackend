@@ -7,6 +7,7 @@ from .serializers import VendorSerializer, PurchaseOrderSerializer, HistoricalPe
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from django.utils import timezone
+
 # Create your views here.
 
 
@@ -59,12 +60,18 @@ class ListVendorDetails(APIView):
 
 
 # Requires an access token 'Bearer <token>' to access this view
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 class ListAllPuchaseOrders(APIView):
 
     # view to list all the purchase orders and their information
     def get(self, request):
-        all_po = PurchaseOrder.objects.all()
+        vendor_id = request.query_params.get('vendor_id')
+        if vendor_id:
+            vendor = get_object_or_404(Vendor, pk=vendor_id)
+            all_po = PurchaseOrder.objects.filter(vendor=vendor)
+        else:
+            all_po = PurchaseOrder.objects.all()
+
         serializer = PurchaseOrderSerializer(all_po, many=True)
         return Response(serializer.data)
     
