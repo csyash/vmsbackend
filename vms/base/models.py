@@ -5,6 +5,7 @@ import string
 from simple_history.models import HistoricalRecords
 from django.db.models.signals import post_save
 from .signals import performance_metrics_handler
+from django.contrib.auth.models import User
 # Create your models here
 
 
@@ -27,7 +28,6 @@ def generate_code(city:str) -> str:
 
 class Vendor(models.Model):
     # Represents a vendor supplying goods or services.
-    
     name = models.CharField(max_length=256, null=False, blank=False)
     contact_details = models.TextField(null=False, blank=False)
     address = models.TextField(null=False, blank=False)
