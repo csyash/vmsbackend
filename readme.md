@@ -41,7 +41,7 @@ python manage.py test api
 
 ## API Endpoints Documentation:
 
-* ### A frontend.js is provided with sample code samples to run apis.
+* ### A frontend.js is provided with code samples on how to run apis.
 
 ### 1) Obtain JWT Token:
 *   URL: /api/token/
