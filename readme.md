@@ -41,6 +41,8 @@ python manage.py test api
 
 ## API Endpoints Documentation:
 
+* ### A frontend.js is provided with sample code samples to run apis.
+
 ### 1) Obtain JWT Token:
 *   URL: /api/token/
 *   Method: POST
@@ -245,15 +247,17 @@ const response = await fetch(`/api/purchase_orders/${poId}`, {
 ### 9) Acknowledge Purchase Order:
 *   URL: /api/purchase_orders/<po_id>/acknowledge/
 *   Method: POST
-*   Description: Acknowledge a purchase order by po_id, initiating recalculation of average response time for the vendor.
+*   Description: Acknowledge a purchase order by po_id and vendor_id, initiating recalculation of average response time for the vendor.
 *   Usage:
 ```
 // Example usage in JavaScript
 const response = await fetch(`/api/purchase_orders/${poId}/acknowledge/`, {
   method: 'POST',
   headers: {
-    'Authorization': `Bearer ${accessToken}`
-  }
+    'Authorization': `Bearer ${accessToken}`,
+    'Content-Type' : 'application/json',
+  },
+  body: JSON.stringify({ vendor_id: vendor_id }),
 });
 ```
 

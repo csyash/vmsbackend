@@ -206,7 +206,10 @@ class PurchaseOrderAPITest(TestCase):
         Test if purchase order is being properly acknowledged or not
         """
         url = reverse('order acknowledge', kwargs={'po_id' : self.po.id})
-        response = self.client.post(url, HTTP_AUTHORIZATION = f'Bearer {self.access_token}')
+        data = {
+            "vendor_id" : self.vendor.id
+        }
+        response = self.client.post(url, data, format="json", HTTP_AUTHORIZATION = f'Bearer {self.access_token}')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         self.po.refresh_from_db()

@@ -139,14 +139,18 @@ class ListVendorPerformance(APIView):
 @permission_classes([IsAuthenticated])
 class AcknowledgePurchaseOrder(APIView):
 
-    # view for vendor to acknowledge its purchase order through po_id. This triggers recalculation of average 
+    # view for vendor to acknowledge its purchase order through po_id and vendor_id. This triggers recalculation of average 
     # response time of vendor
     def post(self, request, po_id):
         po = get_object_or_404(PurchaseOrder, pk=po_id)
-        po.acknowledgement_date = timezone.now()
-        po.save()
+        vendor_id_received = request.data.get('vendor_id')
+        if po.vendor.id == vendor_id_received:        
+            po.acknowledgement_date = timezone.now()
+            po.save()
 
-        return Response({"message":"Acknowledge Success"}, status=status.HTTP_200_OK)
+            return Response({"message":"Acknowledge Success"}, status=status.HTTP_200_OK)
+        
+        return Response({"message":"Unauthorised"}, status=status.HTTP_403_FORBIDDEN)
     
 
 

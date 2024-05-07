@@ -43,11 +43,10 @@ const createNewVendor = async () => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      name: "Divya Jewellers",
+      name: "New Vendor",
       contact_details: "email:divya@eg.com",
-      address: "Telibandha Raipur",
-      city: "Raipur",
-      vendor_code: "RAI050524211842SIV",
+      address: "London",
+      city: "London",
     }),
   });
 
@@ -70,7 +69,7 @@ const updateVendor = async (vendor_id) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      name: "Trisha Traders Updated",
+      name: "New Vendor Updated",
     }),
   });
 
@@ -144,7 +143,7 @@ const createNewPurchaseOrder = async () => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      vendor: 7, // Assuming vendor ID is 1
+      vendor: 8, // Assuming vendor ID
       delivery_date: "2024-05-31T08:00:00Z",
       items: [
         {
@@ -281,16 +280,18 @@ const fetchVendorPerformance = async (vendor_id) => {
   }
 };
 
-const acknowledgePurchaseOrder = async (po_id) => {
+const acknowledgePurchaseOrder = async (po_id, vendor_id) => {
   const accessToken = await getToken();
 
   const res = await fetch(
-    "http://127.0.0.1:8000/api/purchase_orders/1/acknowledge/",
+    `http://127.0.0.1:8000/api/purchase_orders/${po_id}/acknowledge/`,
     {
       method: "post",
       headers: {
         Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
       },
+      body: JSON.stringify({ vendor_id: vendor_id }),
     }
   );
 
@@ -303,10 +304,10 @@ const acknowledgePurchaseOrder = async (po_id) => {
 };
 
 // fetchAllVendors();
-// createNewVendor()
+// createNewVendor();
 // fetchVendor(7);
-// updateVendor(3);
-// deleteVendor(8);
+// updateVendor(14);
+// deleteVendor(7);
 
 // fetchAllPuchaseOrders();
 // createNewPurchaseOrder();
@@ -315,4 +316,4 @@ const acknowledgePurchaseOrder = async (po_id) => {
 // updatePurchaseOrder(6);
 
 // fetchVendorPerformance(3);
-acknowledgePurchaseOrder(1);
+// acknowledgePurchaseOrder(6, 7);
